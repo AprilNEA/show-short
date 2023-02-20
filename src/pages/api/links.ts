@@ -5,11 +5,11 @@ export const config = {
 }
 
 export default async function handler(req: NextRequest) {
-    const result = await (await fetch('https://api.short.io/api/links?domain_id=591161', {
+    const result = await (await fetch(`https://api.short.io/api/links?domain_id=${process.env.DOMAIN_ID}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'sk_yCuRMTas3rCA8clA'
+            'Authorization': process.env.API_TOKEN ?? ''
         }
     })).json()
     return new Response(
