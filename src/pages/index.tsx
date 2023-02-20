@@ -39,10 +39,9 @@ export default function Home({data}: { data: Links }) {
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
             <div className="min-h-screen flex flex-col">
-                <header className="bg-red-50">Header</header>
 
-                <div className="flex-1 flex flex-col sm:flex-row">
-                    <main className="flex-1 bg-indigo-100">
+                <div className="flex-1 flex flex-col sm:flex-row py-10">
+                    <main className="flex-1">
                         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                             <div className="flex flex-col">
                                 <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -65,14 +64,29 @@ export default function Home({data}: { data: Links }) {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {data.links.map(({id, title, shortURL}) => (
+                                                {data.links.map(({id, icon, title, shortURL, originalURL}) => (
                                                     // <tr key={id} className={personIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                                     <tr key={id} className='bg-white'>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{title}</td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                            <div className="flex items-center">
+                                                                <div className="flex-shrink-0 h-5 w-5">
+                                                                    <img className="h-5 w-5 rounded-full" src={icon}
+                                                                         alt=""/>
+                                                                </div>
+                                                                <div className="ml-4">
+                                                                    <div
+                                                                        className="text-sm font-medium text-gray-900">{title}</div>
+                                                                    <div
+                                                                        className="text-sm text-gray-500">{originalURL}</div>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{shortURL}</td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                            <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                                                                Edit
+                                                            <a href={originalURL}
+                                                               className="text-indigo-600 hover:text-indigo-900">
+                                                                Go
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -86,20 +100,21 @@ export default function Home({data}: { data: Links }) {
                         </div>
                     </main>
 
-                    <nav className="order-first sm:w-32 bg-purple-200">Sidebar</nav>
-
-                    <aside className="sm:w-32 bg-yellow-100">Right Sidebar</aside>
                 </div>
 
-                <footer className="bg-gray-100">Footer</footer>
+                <footer className="mx-auto text-gray-400">Power by AprilNEA</footer>
             </div>
         </>
     )
 }
 
-export async function getServerSideProps() {
-    // Fetch data from external API
-    const res = await fetch(`http://localhost:3000/api/links`, {method: 'GET'})
+export async function getServerSideProps(context: any) {
+    // Fetch data from external AP
+    const base_url = process.env.NODE_ENV == "production" ?
+        `https://${context.req.headers.host}`
+        : `http://${context.req.headers.host}`
+
+    const res = await fetch(`${base_url}/api/links`, {method: 'GET'})
     const data = await res.json()
 
     // Pass data to the page via props
